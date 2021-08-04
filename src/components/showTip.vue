@@ -32,6 +32,7 @@
                 pointer: null,
                 point: null,
                 ambient: null,
+                spotLight: null,
                 camera: null,
                 renderer: null,
                 raycaster: null,
@@ -69,28 +70,56 @@
                     obj.translateY(-80);
                 });
 
+                /**
+                 * 点光源
+                 * PointLight(color, intensity, distance, decay)
+                 * color 光的颜色值，十六进制，默认值为0xffffff.
+                 * intensity 光的强度，默认值为1.
+                 * distance 光照距离，默认为0，表示无穷远都能照到.
+                 * decay 随着光的距离，强度衰减的程度，默认为1，为模拟真实效果，建议设置为2
+                 */
                 this.point = new THREE.PointLight(0xffffff, 1, 0, 2);
                 this.point.position.set(400, 200, 300);
                 this.scene.add(this.point);
 
+                /**
+                 * 环境光
+                 * AmbientLight(color, intensity)
+                 * color — 光的颜色值，十六进制，默认值为0xffffff.
+                 * intensity — 光的强度，默认值为1.
+                 */
                 this.ambient = new THREE.AmbientLight(0xffffff, 0.4);
                 this.scene.add(this.ambient);
+
+                /**
+                 * 聚光灯
+                 * SpotLight(color, intensity, distance, angle, penumbra, decay)
+                 * color 光的颜色值，十六进制，默认值为0xffffff.
+                 * intensity 光的强度，默认值为1.
+                 * distance 光照距离，默认为0，表示无穷远都能照到.
+                 * angle 圆椎体的半顶角角度，最大不超过90度，默认为最大值。
+                 * penumbra 光照边缘的模糊化程度，范围0-1，默认为0，不模糊
+                 * decay 随着光的距离，强度衰减的程度，默认为1，为模拟真实效果，建议设置为2
+                 */
+                this.spotLight = new THREE.SpotLight(0x0000ff, 1);
+                this.spotLight.position.set(0, 4, 0);
+                this.scene.add(this.spotLight);
 
                 this.k = this.width / this.height;
 
                 this.camera = new THREE.PerspectiveCamera(45, this.k, 1, 10000);
-                this.camera.position.set(200, 200, 200);
+                this.camera.position.set(1200, 300, 200);
                 this.camera.lookAt(this.scene.position);
 
                 this.renderer = new THREE.WebGL1Renderer();
                 this.renderer.setSize(this.width, this.height);
-                this.renderer.setClearColor(0x040b1a, 1);
+                this.renderer.setClearColor(0xbfc0c4, 1);
                 this.controls = new OrbitControls(this.camera, this.renderer.domElement);
                 this.$refs.models.appendChild(this.renderer.domElement);
                 // 上下翻转的最大角度
-                this.controls.maxPolarAngle = 1.5;
+                this.controls.maxPolarAngle = 1;
                 // 上下翻转的最小角度
-                this.controls.minPolarAngle = 0.3;
+                this.controls.minPolarAngle = .1;
                 this.render();
             },
             render() {
@@ -153,6 +182,7 @@
             showTxtTip(info, e, flag) {
                 this.objectInfo = info.object;
                 if(flag) return false;
+                return false;
                 const width = parseInt(window.getComputedStyle(this.$refs.tipRef).width);
                 const height = parseInt(window.getComputedStyle(this.$refs.tipRef).height);
                 // 20是元素的左右padding
